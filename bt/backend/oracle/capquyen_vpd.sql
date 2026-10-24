@@ -1,0 +1,10 @@
+-- Run in FREEPDB1 using a SYS connection with Role=SYSDBA.
+-- Creates the secure application-context namespace and grants HR_APP the
+-- privileges required to install the VPD policy in its own schema.
+CREATE OR REPLACE CONTEXT SMART_HR_VPD_CTX
+  USING HR_APP.SMART_HR_VPD_CTX_PKG;
+
+GRANT EXECUTE ON SYS.DBMS_RLS TO HR_APP;
+GRANT EXECUTE ON SYS.DBMS_SESSION TO HR_APP;
+GRANT CREATE PROCEDURE TO HR_APP;
+GRANT ADMINISTER ROW LEVEL SECURITY POLICY ON SCHEMA HR_APP TO HR_APP;

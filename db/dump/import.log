@@ -1,0 +1,106 @@
+;;; 
+Import: Release 23.26.3.0.0 - Production on Sat Oct 10 14:45:08 2026
+Version 23.26.3.0.0
+
+Copyright (c) 1982, 2026, Oracle and/or its affiliates.  All rights reserved.
+;;; 
+Connected to: Oracle AI Database 26ai Free Release 23.26.3.0.0 - Develop, Learn, and Run for Free
+Master table "HR_APP"."SYS_IMPORT_SCHEMA_01" successfully loaded/unloaded
+Starting "HR_APP"."SYS_IMPORT_SCHEMA_01":  hr_app/********@localhost:1521/freepdb1 schemas=HR_APP directory=dump_dir dumpfile=HR_APP.DMP 
+Processing object type SCHEMA_EXPORT/SCHEMA_GRANT
+ORA-39083: Object type SCHEMA_GRANT failed to create with error:
+ORA-01749: Cannot GRANT or REVOKE privileges to or from yourself.
+
+Failing sql is:
+GRANT ADMINISTER REDACTION POLICY ON SCHEMA "HR_APP" TO "HR_APP"
+ORA-39083: Object type SCHEMA_GRANT failed to create with error:
+ORA-01749: Cannot GRANT or REVOKE privileges to or from yourself.
+
+Failing sql is:
+GRANT ADMINISTER ROW LEVEL SECURITY POLICY ON SCHEMA "HR_APP" TO "HR_APP"
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA/LOGREP
+Processing object type SCHEMA_EXPORT/SEQUENCE/SEQUENCE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+. . imported "HR_APP"."LEAVE_REQUESTS"                       8 KB       2 rows
+. . imported "HR_APP"."ACTIVITIES"                          12 KB      70 rows
+. . imported "HR_APP"."EMPLOYEES"                         11.3 KB      12 rows
+. . imported "HR_APP"."ATTENDANCE"                         8.2 KB      10 rows
+. . imported "HR_APP"."USERS"                              8.1 KB       5 rows
+. . imported "HR_APP"."REDACTION_DEMO"                       0 KB       0 rows
+Processing object type SCHEMA_EXPORT/PACKAGE/PACKAGE_SPEC
+ORA-31685: Object type PACKAGE:"HR_APP"."SMART_HR_VPD_CTX_PKG" failed due to insufficient privileges. Failing sql is:
+CREATE EDITIONABLE PACKAGE smart_hr_vpd_ctx_pkg AS
+  PROCEDURE set_user(p_username IN VARCHAR2);
+  PROCEDURE clear_context;
+END smart_hr_vpd_ctx_pkg;
+Processing object type SCHEMA_EXPORT/FUNCTION/FUNCTION
+ORA-31685: Object type FUNCTION:"HR_APP"."SMART_HR_DEPARTMENT_PREDICATE" failed due to insufficient privileges. Failing sql is:
+CREATE EDITIONABLE FUNCTION smart_hr_department_predicate(
+  p_schema IN VARCHAR2,
+  p_object IN VARCHAR2
+) RETURN VARCHAR2 AUTHID DEFINER IS
+  v_role       VARCHAR2(40) := SYS_CONTEXT('SMART_HR_VPD_CTX', 'ROLE');
+  v_department VARCHAR2(100) := SYS_CONTEXT('SMART_HR_VPD_CTX', 'DEPARTMENT');
+BEGIN
+  IF v_role = 'ADMIN' THEN
+    RETURN '1=1';
+  END IF;
+
+  IF v_role <> 'DEPARTMENT' OR v_department IS NULL THEN
+    RETURN '1=0';
+  END IF;
+
+  IF UPPER(p_object) = 'EMPLOYEES' THEN
+    RETURN 'department = SYS_CONTEXT(''SMART_HR_VPD_CTX'', ''DEPARTMENT'')';
+  ELSIF UPPER(p_object) IN ('ATTENDANCE', 'LEAVE_REQUESTS') THEN
+    RETURN 'employee_id IN (SELECT id FROM HR_APP.EMPLOYEES '
+      || 'WHERE department = SYS_CONTEXT(''SMART_HR_VPD_CTX'', ''DEPARTMENT''))';
+  END IF;
+
+  RETURN '1=0';
+END smart_hr_department_predicate;
+Processing object type SCHEMA_EXPORT/PACKAGE/COMPILE_PACKAGE/PACKAGE_SPEC/ALTER_PACKAGE_SPEC
+ORA-39112: Dependent object type ALTER_PACKAGE_SPEC:"HR_APP"."SMART_HR_VPD_CTX_PKG" skipped, base object type PACKAGE:"HR_APP"."SMART_HR_VPD_CTX_PKG" creation failed
+Processing object type SCHEMA_EXPORT/FUNCTION/ALTER_FUNCTION
+ORA-39112: Dependent object type ALTER_FUNCTION:"HR_APP"."SMART_HR_DEPARTMENT_PREDICATE" skipped, base object type FUNCTION:"HR_APP"."SMART_HR_DEPARTMENT_PREDICATE" creation failed
+Processing object type SCHEMA_EXPORT/PACKAGE/PACKAGE_BODY
+ORA-31685: Object type PACKAGE_BODY:"HR_APP"."SMART_HR_VPD_CTX_PKG" failed due to insufficient privileges. Failing sql is:
+CREATE EDITIONABLE PACKAGE BODY smart_hr_vpd_ctx_pkg AS
+  PROCEDURE set_user(p_username IN VARCHAR2) IS
+    v_role       users.role%TYPE;
+    v_department users.department%TYPE;
+  BEGIN
+    SELECT UPPER(role), department
+      INTO v_role, v_department
+      FROM users
+     WHERE username = p_username;
+
+    IF v_role NOT IN ('ADMIN', 'DEPARTMENT') THEN
+      RAISE_APPLICATION_ERROR(-20081, 'Unsupported Smart HR account role');
+    END IF;
+    IF v_role = 'DEPARTMENT' AND v_department IS NULL THEN
+      RAISE_APPLICATION_ERROR(-20082, 'Department account has no department');
+    END IF;
+
+    DBMS_SESSION.SET_CONTEXT('SMART_HR_VPD_CTX', 'ROLE', v_role);
+    DBMS_SESSION.SET_CONTEXT('SMART_HR_VPD_CTX', 'DEPARTMENT', v_department);
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+      DBMS_SESSION.SET_CONTEXT('SMART_HR_VPD_CTX', 'ROLE', NULL);
+      DBMS_SESSION.SET_CONTEXT('SMART_HR_VPD_CTX', 'DEPARTMENT', NULL);
+      RAISE_APPLICATION_ERROR(-20083, 'Smart HR account was not found');
+  END set_user;
+
+  PROCEDURE clear_context IS
+  BEGIN
+    DBMS_SESSION.SET_CONTEXT('SMART_HR_VPD_CTX', 'ROLE', NULL);
+    DBMS_SESSION.SET_CONTEXT('SMART_HR_VPD_CTX', 'DEPARTMENT', NULL);
+  END clear_context;
+END smart_hr_vpd_ctx_pkg;
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Job "HR_APP"."SYS_IMPORT_SCHEMA_01" completed with 7 error(s) at Sat Oct 10 14:45:36 2026 elapsed 0 00:00:25

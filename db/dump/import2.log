@@ -1,0 +1,41 @@
+;;; 
+Import: Release 23.26.3.0.0 - Production on Wed Oct 14 21:12:07 2026
+Version 23.26.3.0.0
+
+Copyright (c) 1982, 2026, Oracle and/or its affiliates.  All rights reserved.
+;;; 
+Connected to: Oracle AI Database 26ai Free Release 23.26.3.0.0 - Develop, Learn, and Run for Free
+Master table "HR_APP"."SYS_IMPORT_SCHEMA_01" successfully loaded/unloaded
+Starting "HR_APP"."SYS_IMPORT_SCHEMA_01":  hr_app/********@localhost:1521/freepdb1 schemas=HR_APP directory=dump_dir dumpfile=HR_APP.DMP logfile=import2.log 
+Processing object type SCHEMA_EXPORT/SCHEMA_GRANT
+ORA-39083: Object type SCHEMA_GRANT failed to create with error:
+ORA-01749: Cannot GRANT or REVOKE privileges to or from yourself.
+
+Failing sql is:
+GRANT ADMINISTER REDACTION POLICY ON SCHEMA "HR_APP" TO "HR_APP"
+ORA-39083: Object type SCHEMA_GRANT failed to create with error:
+ORA-01749: Cannot GRANT or REVOKE privileges to or from yourself.
+
+Failing sql is:
+GRANT ADMINISTER ROW LEVEL SECURITY POLICY ON SCHEMA "HR_APP" TO "HR_APP"
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA/LOGREP
+Processing object type SCHEMA_EXPORT/SEQUENCE/SEQUENCE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+. . imported "HR_APP"."LEAVE_REQUESTS"                       8 KB       2 rows
+. . imported "HR_APP"."ACTIVITIES"                          12 KB      70 rows
+. . imported "HR_APP"."EMPLOYEES"                         11.3 KB      12 rows
+. . imported "HR_APP"."ATTENDANCE"                         8.2 KB      10 rows
+. . imported "HR_APP"."USERS"                              8.1 KB       5 rows
+. . imported "HR_APP"."REDACTION_DEMO"                       0 KB       0 rows
+Processing object type SCHEMA_EXPORT/PACKAGE/PACKAGE_SPEC
+Processing object type SCHEMA_EXPORT/FUNCTION/FUNCTION
+Processing object type SCHEMA_EXPORT/PACKAGE/COMPILE_PACKAGE/PACKAGE_SPEC/ALTER_PACKAGE_SPEC
+Processing object type SCHEMA_EXPORT/FUNCTION/ALTER_FUNCTION
+Processing object type SCHEMA_EXPORT/PACKAGE/PACKAGE_BODY
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Job "HR_APP"."SYS_IMPORT_SCHEMA_01" completed with 2 error(s) at Wed Oct 14 21:12:33 2026 elapsed 0 00:00:23
