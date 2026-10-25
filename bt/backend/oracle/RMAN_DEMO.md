@@ -206,3 +206,76 @@ Start-ScheduledTask -TaskName "RMAN Weekly Backup"   # chạy thử ngay
 ```
 
 Kiểm tra: xem log mới nhất trong `backup/logs/` và chạy `LIST BACKUP SUMMARY;` trong RMAN. Đổi giờ/ngày bằng cách sửa `-DaysOfWeek` và `-At` trong `register_task.ps1`. Tài khoản chạy task cần thuộc nhóm `ORA_DBA`.
+
+### 7.1 Sửa cấu hình để lịch không bị bỏ lỡ (làm một lần)
+
+`register_task.ps1` mặc định chặn chạy khi máy dùng pin và không đánh thức máy. Nếu máy là laptop, lần 02:00 có thể bị bỏ qua. Chạy PowerShell **Run as Administrator**:
+
+```powershell
+$s = New-ScheduledTaskSettingsSet -StartWhenAvailable -WakeToRun -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+Set-ScheduledTask -TaskName "RMAN Weekly Backup" -Settings $s
+```
+
+Cần cắm sạc và để máy sleep (không shutdown) vào đêm Chủ nhật, và tài khoản `Admin` phải đang đăng nhập.
+
+### 7.2 Chứng minh sao lưu tự động hoạt động
+
+Chạy mọi lệnh PowerShell dưới đây trong PowerShell **Run as Administrator**.
+
+**a) Bật lịch sử Task Scheduler (trước khi chạy)**
+
+Tab History trong `taskschd.msc` trống nếu lịch sử đang tắt, và chỉ ghi các lần chạy sau khi bật.
+
+```powershell
+wevtutil set-log Microsoft-Windows-TaskScheduler/Operational /enabled:true
+```
+
+Hoặc mở `taskschd.msc` (Windows + R), ở khung Actions chọn **Enable All Tasks History**.
+
+**b) Chứng minh lịch hằng tuần**
+
+```powershell
+Get-ScheduledTask "RMAN Weekly Backup" | Get-ScheduledTaskInfo | Format-List TaskName, LastRunTime, LastTaskResult, NextRunTime
+(Get-ScheduledTask "RMAN Weekly Backup").Triggers | Format-List StartBoundary, DaysOfWeek
+```
+
+`NextRunTime` phải là một Chủ nhật lúc 02:00. Trong `taskschd.msc`: Task Scheduler Library -> **RMAN Weekly Backup** -> các tab *Triggers*, *Actions*, *Settings*.
+
+**c) Chứng minh task tự chạy được**
+
+Cách A (nhanh): chạy ngay bằng Task Scheduler.
+
+```powershell
+Start-ScheduledTask "RMAN Weekly Backup"
+Get-ScheduledTask "RMAN Weekly Backup" | Get-ScheduledTaskInfo | Format-List State, LastRunTime, LastTaskResult
+```
+
+Khi đang chạy `State` là `Running`, xong là `Ready` và `LastTaskResult = 0` (mất vài phút). Có thêm một file log mới trong `backup/logs/`, và tab *History* (bấm F5) có các sự kiện *Task Started* -> *Task completed*.
+
+Cách B (chứng minh đúng giờ): thêm trigger thử 3 phút sau.
+
+```powershell
+$task = Get-ScheduledTask "RMAN Weekly Backup"
+$test = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(3)
+Set-ScheduledTask "RMAN Weekly Backup" -Trigger ($task.Triggers + $test)
+```
+
+Đến giờ task tự chạy mà không ai bấm. Demo xong, đăng ký lại để bỏ trigger thử, rồi chạy lại mục 7.1:
+
+```powershell
+cd D:\BTL\ATWeb\bt\backend\oracle\backup
+.\register_task.ps1
+```
+
+**d) Chứng minh bản backup dùng được**
+
+```
+set ORACLE_SID=FREE
+rman target /
+LIST BACKUP SUMMARY;
+RESTORE DATABASE VALIDATE;
+```
+
+`LIST BACKUP SUMMARY` cho thấy bản backup mới nhất khớp thời điểm chạy. `RESTORE DATABASE VALIDATE` chỉ kiểm tra, không ghi đè dữ liệu.
+
+**Thứ tự gợi ý khi trình bày:** mở `taskschd.msc` chỉ *Triggers* và *Settings* -> chạy cách A -> mở thư mục `logs` và tab *History* -> `LIST BACKUP SUMMARY` -> (nếu còn thời gian) demo khôi phục ở mục 4.

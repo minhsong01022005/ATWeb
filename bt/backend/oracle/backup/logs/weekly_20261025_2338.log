@@ -1,0 +1,123 @@
+
+Recovery Manager: Release 23.26.3.0.0 - Production on Sun Oct 25 23:38:34 2026
+Version 23.26.3.0.0
+
+Copyright (c) 1982, 2026, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: FREE (DBID=1518696088)
+
+RMAN> CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 28 DAYS;
+2> CONFIGURE CONTROLFILE AUTOBACKUP ON;
+3> RUN {
+4>   BACKUP INCREMENTAL LEVEL 0 DATABASE PLUS ARCHIVELOG;
+5>   DELETE NOPROMPT OBSOLETE;
+6> }
+7> LIST BACKUP SUMMARY;
+8> 
+using target database control file instead of recovery catalog
+old RMAN configuration parameters:
+CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 28 DAYS;
+new RMAN configuration parameters:
+CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 28 DAYS;
+new RMAN configuration parameters are successfully stored
+
+old RMAN configuration parameters:
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+new RMAN configuration parameters:
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+new RMAN configuration parameters are successfully stored
+
+
+Starting backup at 25-OCT-26
+current log archived
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=54 device type=DISK
+channel ORA_DISK_1: starting archived log backup set
+channel ORA_DISK_1: specifying archived log(s) in backup set
+input archived log thread=1 sequence=12 RECID=1 STAMP=1247246666
+input archived log thread=1 sequence=13 RECID=2 STAMP=1247246674
+input archived log thread=1 sequence=14 RECID=3 STAMP=1247270418
+input archived log thread=1 sequence=15 RECID=4 STAMP=1247330868
+input archived log thread=1 sequence=16 RECID=5 STAMP=1247396621
+input archived log thread=1 sequence=17 RECID=6 STAMP=1247443707
+input archived log thread=1 sequence=18 RECID=7 STAMP=1247529618
+input archived log thread=1 sequence=19 RECID=8 STAMP=1247614719
+channel ORA_DISK_1: starting piece 1 at 25-OCT-26
+channel ORA_DISK_1: finished piece 1 at 25-OCT-26
+piece handle=D:\RMAN_BACKUP\FREE\BACKUPSET\2026_10_25\O1_MF_ANNNN_TAG20261025T233840_OFWD4J7D_.BKP tag=TAG20261025T233840 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:03
+Finished backup at 25-OCT-26
+
+Starting backup at 25-OCT-26
+using channel ORA_DISK_1
+channel ORA_DISK_1: starting incremental level 0 datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00003 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\SYSAUX01.DBF
+input datafile file number=00001 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\SYSTEM01.DBF
+input datafile file number=00011 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\UNDOTBS01.DBF
+input datafile file number=00007 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\USERS01.DBF
+channel ORA_DISK_1: starting piece 1 at 25-OCT-26
+channel ORA_DISK_1: finished piece 1 at 25-OCT-26
+piece handle=D:\RMAN_BACKUP\FREE\BACKUPSET\2026_10_25\O1_MF_NNND0_TAG20261025T233843_OFWD4MJ7_.BKP tag=TAG20261025T233843 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:03
+channel ORA_DISK_1: starting incremental level 0 datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00013 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\FREEPDB1\SYSAUX01.DBF
+input datafile file number=00012 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\FREEPDB1\SYSTEM01.DBF
+input datafile file number=00014 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\FREEPDB1\UNDOTBS01.DBF
+input datafile file number=00015 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\FREEPDB1\USERS01.DBF
+channel ORA_DISK_1: starting piece 1 at 25-OCT-26
+channel ORA_DISK_1: finished piece 1 at 25-OCT-26
+piece handle=D:\RMAN_BACKUP\FREE\FAC9FE40CAC640E39A5BE3FE816A9C15\BACKUPSET\2026_10_25\O1_MF_NNND0_TAG20261025T233843_OFWD4PO8_.BKP tag=TAG20261025T233843 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:01
+channel ORA_DISK_1: starting incremental level 0 datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00004 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\PDBSEED\SYSAUX01.DBF
+input datafile file number=00002 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\PDBSEED\SYSTEM01.DBF
+input datafile file number=00009 name=C:\APP\ADMIN\PRODUCT\26AI\ORADATA\FREE\PDBSEED\UNDOTBS01.DBF
+channel ORA_DISK_1: starting piece 1 at 25-OCT-26
+channel ORA_DISK_1: finished piece 1 at 25-OCT-26
+piece handle=D:\RMAN_BACKUP\FREE\29D1926DD38E4D578AAC0D4B185D7FE0\BACKUPSET\2026_10_25\O1_MF_NNND0_TAG20261025T233843_OFWD4QQT_.BKP tag=TAG20261025T233843 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:01
+Finished backup at 25-OCT-26
+
+Starting backup at 25-OCT-26
+current log archived
+using channel ORA_DISK_1
+channel ORA_DISK_1: starting archived log backup set
+channel ORA_DISK_1: specifying archived log(s) in backup set
+input archived log thread=1 sequence=20 RECID=9 STAMP=1247614728
+channel ORA_DISK_1: starting piece 1 at 25-OCT-26
+channel ORA_DISK_1: finished piece 1 at 25-OCT-26
+piece handle=D:\RMAN_BACKUP\FREE\BACKUPSET\2026_10_25\O1_MF_ANNNN_TAG20261025T233848_OFWD4RWT_.BKP tag=TAG20261025T233848 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:01
+Finished backup at 25-OCT-26
+
+Starting Control File and SPFILE Autobackup at 25-OCT-26
+piece handle=D:\RMAN_BACKUP\FREE\AUTOBACKUP\2026_10_25\O1_MF_S_1247614730_OFWD4T42_.BKP comment=NONE
+Finished Control File and SPFILE Autobackup at 25-OCT-26
+
+RMAN retention policy will be applied to the command
+RMAN retention policy is set to recovery window of 28 days
+using channel ORA_DISK_1
+no obsolete backups found
+
+
+List of Backups
+===============
+Key     TY LV S Device Type Completion Time #Pieces #Copies Compressed Tag
+------- -- -- - ----------- --------------- ------- ------- ---------- ---
+1       B  A  A DISK        21-OCT-26       1       1       NO         TAG20261021T172427
+2       B  0  A DISK        21-OCT-26       1       1       NO         TAG20261021T172428
+3       B  0  A DISK        21-OCT-26       1       1       NO         TAG20261021T172428
+4       B  0  A DISK        21-OCT-26       1       1       NO         TAG20261021T172428
+5       B  A  A DISK        21-OCT-26       1       1       NO         TAG20261021T172434
+6       B  F  A DISK        21-OCT-26       1       1       NO         TAG20261021T172435
+7       B  A  A DISK        25-OCT-26       1       1       NO         TAG20261025T233840
+8       B  0  A DISK        25-OCT-26       1       1       NO         TAG20261025T233843
+9       B  0  A DISK        25-OCT-26       1       1       NO         TAG20261025T233843
+10      B  0  A DISK        25-OCT-26       1       1       NO         TAG20261025T233843
+11      B  A  A DISK        25-OCT-26       1       1       NO         TAG20261025T233848
+12      B  F  A DISK        25-OCT-26       1       1       NO         TAG20261025T233850
+
+Recovery Manager complete.
