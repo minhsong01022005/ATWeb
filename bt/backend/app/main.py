@@ -39,6 +39,23 @@ DEPARTMENT_MIGRATION = {
 }
 
 
+def sync_oracle_sequences():
+    """Advance each PK sequence past MAX(id) (ORA-00001 after import/restore/recreated sequences)."""
+    with engine.connect() as conn:
+        for table in Base.metadata.sorted_tables:
+            for column in table.primary_key.columns:
+                seq = column.default
+                if not isinstance(seq, Sequence):
+                    continue
+                top = conn.execute(text(f"SELECT NVL(MAX({column.name}), 0) FROM {table.name}")).scalar()
+                cur = conn.execute(text(f"SELECT {seq.name}.NEXTVAL FROM dual")).scalar()
+                if cur < top:
+                    conn.execute(text(f"ALTER SEQUENCE {seq.name} INCREMENT BY {top - cur}"))
+                    conn.execute(text(f"SELECT {seq.name}.NEXTVAL FROM dual")).scalar()
+                    conn.execute(text(f"ALTER SEQUENCE {seq.name} INCREMENT BY 1"))
+        conn.commit()
+
+
 @app.on_event("startup")
 def startup():
     Base.metadata.create_all(bind=engine)
@@ -49,6 +66,7 @@ def startup():
             for column in table.primary_key.columns:
                 if isinstance(column.default, Sequence):
                     column.default.create(bind=engine, checkfirst=True)
+        sync_oracle_sequences()
     with next(get_db()) as db:
         if not db.scalar(select(User).where(User.username == "admin")):
             db.add(User(username="admin", password_hash=hash_password(os.getenv("ADMIN_PASSWORD", "Admin@123")), full_name="Lan Anh", role="admin"))
